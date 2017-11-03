@@ -1,12 +1,10 @@
 # EbatesTracker
-
 A naive crawler that traces cash back rates on Ebates
 
 ## How to use:
-
 * clone the code
-* add email addresses for notification in ALERT_ADDR
-* add stores of interest in query_store_list
-* run main.py
-
-
+```
+git clone https://github.com/Eplistical/EbatesTracker.git
+```
+* edit ALERT_ADDR and QUERY_STORE_LIST accordingly (see `ALERT_ADDR_example` and `QUERY_STORE_LIST_example`)
+* run `main.py` to retrieve cashback data (see `main.py --help` for usage) 
