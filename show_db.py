@@ -2,7 +2,6 @@
 
 from ebates_tracker import *
 
-
 def show_db():
     tracker = EbatesTracker()
     for key, data in tracker.get_history().items():
