@@ -1,8 +1,8 @@
 # system modules
-import re
 import requests
 from datetime import datetime
 import warnings
+from bs4 import BeautifulSoup
 
 # local modules
 from .ebates_tracker_exceptions import *
@@ -101,19 +101,15 @@ class EbatesTracker(object):
             if query_store_list is None, then retrieve all stores
         """
         text = EbatesTracker.make_request()
-        # construct regex
-        itempattern = re.compile('<div class="m-store-row-s alpha_\S">(.*?)</div>', re.DOTALL)
-        name_pattern = re.compile('class="name-link" .*?>(.*?)</a>', re.DOTALL)
-        cashback_pattern = re.compile('class="cb prox-r nohover rebate-link".*?title=.*?>(.*?)<', re.DOTALL)
+        soup = BeautifulSoup(text, 'html.parser')
+        updatetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         # dig info from text and convert to a list of StoreInfo objects
         all_store_list = list()
-        updatetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        for item in itempattern.findall(text):
-            name = name_pattern.search(item).group(1).strip()
-            cashback = CashBack(cashback_pattern.search(item).group(1).strip())
-            store = StoreInfo(name, cashback, updatetime)
-            all_store_list.append(store)
-
+        for divtag in soup.find_all('div'):
+            name = divtag.find('a', {'class' : 'name-link'}).next.strip()
+            cashback = divtag.find('a', {'class' : 'cb prox-r nohover rebate-link'}).next.strip()
+            all_store_list.append(StoreInfo(name, cashback, updatetime))
+        # query
         if query_store_list is None:
             rst = all_store_list
         else:
