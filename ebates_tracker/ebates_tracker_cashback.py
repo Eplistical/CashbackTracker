@@ -22,8 +22,11 @@ class CashBack(object):
                 Up to $2.00 Cash Back
                 No Discount
                 Coupons Only
+                In-Store Cash Back only
         """
-        if txt == 'No Discount' or txt == 'Coupons Only':
+        if txt in ( 'No Discount', 
+                    'Coupons Only', 
+                    'In-Store Cash Back only'):
             self.value = 0.0
             self.measure = self.BY_PERCENT
             self.up_to = False
