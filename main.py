@@ -2,7 +2,7 @@
 import argparse
 import time
 # local modules
-from ebates_tracker import *
+from trackers import EbatesTracker
 
 
 def parsearg():

@@ -1,7 +1,7 @@
 from datetime import datetime
 from bs4 import BeautifulSoup
 
-from cashback_tracker import *
+from .cashback_tracker import *
 
 
 class EbatesTracker(CashbackTracker):
