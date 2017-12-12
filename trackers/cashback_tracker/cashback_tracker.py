@@ -27,7 +27,8 @@ class CashbackTracker(object):
     def process(self, save_history=False):
         """process stores in query_store_list
 
-            param save_history: if True, save all history record
+            Args
+                @save_history: if True, save all history record
         """
         alert_list = list()
         alert_list_last = list()
@@ -49,22 +50,11 @@ class CashbackTracker(object):
         if alert_list:
             CashbackTracker_alert(alert_list, alert_list_last)
 
-    '''
-    def get_history(self):
-        """get history data for query_store_list
-        """
-        rst = dict()
-        for store in self.query_store_list:
-            rst[store.name] = list()
-            for cashback_str, updatetime_str in self.dbmgr.get_history(store):
-                updatetime = datetime.strptime(updatetime_str, self.time_stamp_pattern)
-                cashback = CashBack(cashback_str)
-                rst[store.name].append((updatetime, cashback, ))
-        return rst
-    '''
-
     def load_query_store_list(self):
-        """load query store list from file
+        """load query store list from QUERY_STORE_LIST file
+
+            Returns
+                #query_store_list: a list of QueryStoreInfo objects
         """
         with open('QUERY_STORE_LIST', 'r') as f:
             lines = f.read().split('\n')
@@ -80,30 +70,15 @@ class CashbackTracker(object):
                         )
         return query_store_list
 
-    @staticmethod
-    def make_request(url):
-        """make request to retrieve website content from given url
-        """
-        headers = {
-            'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
-            'accept-encoding' : 'gzip, deflate, br',
-            'accept-language' : 'en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4',
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
-        }
-        # retrieve data from web
-        r = requests.get(url, headers=headers)
-        if r.status_code == 200:
-            return r.text
-        else:
-            raise RequestError("Error when retrieving info, status_code: %d " % r.status_code)
-
-    def retrieve_all_store_list(self):
-        """make request and retrieve a list of StoreInfo
-        """
-
     def retrieve(self, query_store_list=None):
         """retrieve information for query stores on Cashback
             if query_store_list is None, then retrieve all stores
+
+            Args
+                @query_store_list: a list of QueryStoreInfo objects
+
+            Returns
+                #rst: a list of StoreInfo objects corresponding to query_store_list
         """
         # dig info from text and convert to a list of StoreInfo objects
         all_store_list = self.retrieve_all_store_list()
@@ -123,6 +98,40 @@ class CashbackTracker(object):
                     warnings.warn(
                     ''' No such a store named %s on Cashback, maybe an incorrect name.''' % store_name)
         return rst
+
+    def retrieve_all_store_list(self):
+        """make request and retrieve a list of StoreInfo
+            this method should be overrided in children class
+
+            Returns
+               #all_store_list: a list of StoreInfo objects containing all stores for the cashback website
+        """
+        all_store_list = list()
+        return all_store_list
+
+    @staticmethod
+    def make_request(url):
+        """make request to retrieve website content from given url
+            this is a helper method, should be used in retrieve_all_store_list()
+
+            Args
+                @url: website to retrieve
+
+            Returns
+                #r.text: website content
+        """
+        headers = {
+            'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+            'accept-encoding' : 'gzip, deflate, br',
+            'accept-language' : 'en-US,en;q=0.8,zh-CN;q=0.6,zh;q=0.4',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
+        }
+        # retrieve data from web
+        r = requests.get(url, headers=headers)
+        if r.status_code == 200:
+            return r.text
+        else:
+            raise RequestError("Error when retrieving info, status_code: %d " % r.status_code)
 
 
 if __name__ == '__main__':
