@@ -4,11 +4,11 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # local modules
-from .ebates_tracker_exceptions import *
-from .ebates_tracker_storeinfo import *
+from .cashback_tracker_exceptions import *
+from .cashback_tracker_storeinfo import *
 
 
-__all__ = ['EbatesTracker_alert']
+__all__ = ['CashbackTracker_alert']
 
 
 def generate_alert_txt(now_info_list, last_info_list):
@@ -16,19 +16,19 @@ def generate_alert_txt(now_info_list, last_info_list):
     """
     rst = """
         ALERT: Cash back changes
-        ----------------------------------------------------------------------
-        %20s%20s%20s
-        ----------------------------------------------------------------------
-    """[1:-1] % ('Name', 'Now Cashback', 'Last Cashback')
+        ---------------------------------------------------------------------------------------
+        %20s%20s%20s%20s
+        ---------------------------------------------------------------------------------------
+    """[1:-1] % ('Name', 'Source', 'Now Cashback', 'Last Cashback')
 
     for now_info, last_info in zip(now_info_list, last_info_list):
         last_cashback = None if last_info is None else last_info.cashback
         rst += """
-        %20s%20s%20s
-        """[:-1] % (now_info.name, now_info.cashback,
-                last_cashback)
+        %20s%20s%20s%20s
+        """[:-1] % (now_info.name, now_info.source,
+                now_info.cashback, last_cashback)
     rst += """
-        ----------------------------------------------------------------------
+        ---------------------------------------------------------------------------------------
     """
     return rst
 
@@ -42,8 +42,8 @@ def alert_by_print(now_info_list, last_info_list):
 def alert_by_email(now_info_list, last_info_list):
     """alert by email
     """
-    Subject = 'EbatesTracker Alert'
-    From = 'ebates_tracker@EbatesTracker.com'
+    Subject = 'CashbackTracker Alert'
+    From = 'reminder@CashbackTracker.com'
     # generate recipients
     To = ''
     with open('ALERT_ADDR', 'r') as f:
@@ -68,16 +68,16 @@ def alert_by_email(now_info_list, last_info_list):
     s.quit()
 
 
-def EbatesTracker_alert(now_info_list, last_info_list):
+def CashbackTracker_alert(now_info_list, last_info_list):
     """alert cashback for given new & old StoreInfo objects
     """
-    #alert_by_print(now_info_list, last_info_list)
-    alert_by_email(now_info_list, last_info_list)
+    alert_by_print(now_info_list, last_info_list)
+    #alert_by_email(now_info_list, last_info_list)
 
 
 if __name__ == '__main__':
     print('''
-    This file contains the alert function for EbatesTracker.
+    This file contains the alert function for CashbackTracker.
     One may modify this file to custimize how to notify the cashback changes.
     ''')
 

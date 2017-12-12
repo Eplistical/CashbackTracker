@@ -3,10 +3,11 @@ from .cashback_tracker_cashback import *
 class QueryStoreInfo(object):
     """A class storing query information for a store
     """
-    def __init__(self, name, alert_threash):
+    def __init__(self, name, source, alert_threash):
         """init
         """
         self.name = name
+        self.source = source
         if isinstance(alert_threash, CashBack):
             self.alert_threash = alert_threash
         else:
@@ -17,8 +18,9 @@ class QueryStoreInfo(object):
         """
         rst = """
         name: %s
+        source: %s
         alert threash: %s
-        """ % (self.name, self.alert_threash)
+        """ % (self.name, self.source, self.alert_threash)
         return rst
 
 

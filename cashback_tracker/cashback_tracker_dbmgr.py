@@ -75,7 +75,7 @@ class CashbackTrackerDBMgr(object):
         source = obj.source.replace("'", "''")
         self.cursor.execute(
             '''SELECT * FROM stores
-            WHERE name = '%s', source = '%s'
+            WHERE name = '%s' AND source = '%s'
             ''' % (name, source))
         rows = self.cursor.fetchall()
         if len(rows) == 1:
@@ -94,11 +94,11 @@ class CashbackTrackerDBMgr(object):
         source = obj.source.replace("'", "''")
         self.cursor.execute(
             '''DELETE FROM stores
-            WHERE name = '%s', source = '%s'
+            WHERE name = '%s' AND source = '%s'
             ''' % (name, source))
         self.cursor.execute(
             '''DELETE FROM stores_history
-            WHERE name = '%s', source = '%s'
+            WHERE name = '%s' AND source = '%s'
             ''' % (name, source))
 
     def update(self, obj):
@@ -107,7 +107,7 @@ class CashbackTrackerDBMgr(object):
         if obj not in self:
             self.cursor.execute(
                 '''INSERT INTO stores
-                VALUES ('%s', '%s', '%s' '%s')
+                VALUES ('%s', '%s', '%s', '%s')
                 ''' % (obj.name.replace("'", "''"),
                        obj.source.replace("'", "''"),
                        obj.cashback,
@@ -118,7 +118,7 @@ class CashbackTrackerDBMgr(object):
             self.cursor.execute(
                 '''UPDATE stores
                 SET cashback = '%s', updatetime = '%s'
-                WHERE name = '%s', source = '%s'
+                WHERE name = '%s' AND source = '%s'
                 '''% (obj.cashback,
                       obj.updatetime,
                       obj.name.replace("'", "''"),
@@ -143,14 +143,33 @@ class CashbackTrackerDBMgr(object):
         """get history data for a given store
         """
         name = obj.name.replace("'", "''")
-        source = obj.source.replace("'", "''"),
+        source = obj.source.replace("'", "''")
         self.cursor.execute(
                 '''SELECT cashback, updatetime FROM stores_history
-                WHERE name = '%s', source = '%s'
+                WHERE name = '%s' AND source = '%s'
                 ''' % (name, source)
                 )
         rows = self.cursor.fetchall()
         return rows
+
+    def get_history2(self, name=None, source=None):
+        """get history for given name and/or store
+        """
+        cmd = '''SELECT * FROM stores_history '''
+        if name is None and source is not None:
+            cmd += 'WHERE source = %s' % source.replace("'", "''")
+        elif name is not None and source is None:
+            cmd += 'WHERE name = %s' % name.replace("'", "''")
+        elif name is not None and source is not None:
+            cmd += 'WHERE name = %s AND source = %s' % (
+                    name.replace("'", "''"),
+                    source.replace("'", "''"),
+                    )
+        self.cursor.execute(cmd)
+        rows = self.cursor.fetchall()
+        return rows
+        
+
 
 
 if __name__ == '__main__':

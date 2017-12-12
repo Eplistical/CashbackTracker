@@ -1,5 +1,4 @@
 # system modules
-import re
 import requests
 from datetime import datetime
 import warnings
@@ -17,11 +16,6 @@ class CashbackTracker(object):
     """
     time_stamp_pattern = "%Y-%m-%d %H:%M:%S"
     source = None
-    request_url = None
-    # regex patterns for parsing
-    itempattern = None
-    name_pattern = None
-    cashback_pattern = None
 
     def __init__(self):
         """init object
@@ -55,6 +49,7 @@ class CashbackTracker(object):
         if alert_list:
             CashbackTracker_alert(alert_list, alert_list_last)
 
+    '''
     def get_history(self):
         """get history data for query_store_list
         """
@@ -66,9 +61,9 @@ class CashbackTracker(object):
                 cashback = CashBack(cashback_str)
                 rst[store.name].append((updatetime, cashback, ))
         return rst
+    '''
 
-    @staticmethod
-    def load_query_store_list():
+    def load_query_store_list(self):
         """load query store list from file
         """
         with open('QUERY_STORE_LIST', 'r') as f:
@@ -81,12 +76,13 @@ class CashbackTracker(object):
                 name = " ".join(s[:-1]).strip()
                 alert_threash = s[-1]
                 query_store_list.append(
-                        QueryStoreInfo(name, alert_threash)
+                        QueryStoreInfo(name, self.source, alert_threash)
                         )
         return query_store_list
 
-    def make_request(self):
-        """make request to retrieve website content
+    @staticmethod
+    def make_request(url):
+        """make request to retrieve website content from given url
         """
         headers = {
             'accept' : 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
@@ -95,25 +91,22 @@ class CashbackTracker(object):
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36',
         }
         # retrieve data from web
-        r = requests.get(self.request_url, headers=headers)
+        r = requests.get(url, headers=headers)
         if r.status_code == 200:
             return r.text
         else:
             raise RequestError("Error when retrieving info, status_code: %d " % r.status_code)
 
+    def retrieve_all_store_list(self):
+        """make request and retrieve a list of StoreInfo
+        """
+
     def retrieve(self, query_store_list=None):
         """retrieve information for query stores on Cashback
             if query_store_list is None, then retrieve all stores
         """
-        text = CashbackTracker.make_request()
         # dig info from text and convert to a list of StoreInfo objects
-        all_store_list = list()
-        updatetime = datetime.now().strftime(self.time_stamp_pattern)
-        for item in self.itempattern.findall(text):
-            name = self.name_pattern.search(item).group(1).strip()
-            cashback = CashBack(self.cashback_pattern.search(item).group(1).strip())
-            store = StoreInfo(name, self.source, cashback, updatetime)
-            all_store_list.append(store)
+        all_store_list = self.retrieve_all_store_list()
 
         if query_store_list is None:
             rst = all_store_list
