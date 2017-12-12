@@ -5,17 +5,10 @@ from cashback_tracker import CashbackTrackerDBMgr
 
 def show_db():
     dbmgr = CashbackTrackerDBMgr()
-    for a in dbmgr.get_history2():
-        print(a)
-    '''
-    tracker = EbatesTracker()
-    for key, data in tracker.get_history().items():
-        print(key, ":")
+    for record in dbmgr.show(name="Macy's", source="Ebates"):
+        for tmp in record:
+            print('%30s' % tmp, end=' ')
         print()
-        for updatetime, cashback in data:
-            print(updatetime, cashback)
-        print('-'*64)
-    '''
 
 
 if __name__ == '__main__':

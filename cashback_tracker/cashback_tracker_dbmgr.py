@@ -139,32 +139,20 @@ class CashbackTrackerDBMgr(object):
                    )
         )
 
-    def get_history(self, obj):
-        """get history data for a given store
-        """
-        name = obj.name.replace("'", "''")
-        source = obj.source.replace("'", "''")
-        self.cursor.execute(
-                '''SELECT cashback, updatetime FROM stores_history
-                WHERE name = '%s' AND source = '%s'
-                ''' % (name, source)
-                )
-        rows = self.cursor.fetchall()
-        return rows
-
-    def get_history2(self, name=None, source=None):
-        """get history for given name and/or store
+    def show(self, name=None, source=None):
+        """show records for given name and/or store
         """
         cmd = '''SELECT * FROM stores_history '''
         if name is None and source is not None:
-            cmd += 'WHERE source = %s' % source.replace("'", "''")
+            cmd += "WHERE source = '%s'" % source.replace("'", "''")
         elif name is not None and source is None:
-            cmd += 'WHERE name = %s' % name.replace("'", "''")
+            cmd += "WHERE name = '%s'" % name.replace("'", "''")
         elif name is not None and source is not None:
-            cmd += 'WHERE name = %s AND source = %s' % (
+            cmd += "WHERE name = '%s' AND source = '%s'" % (
                     name.replace("'", "''"),
                     source.replace("'", "''"),
                     )
+        print(cmd)
         self.cursor.execute(cmd)
         rows = self.cursor.fetchall()
         return rows
