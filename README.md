@@ -1,5 +1,5 @@
-# EbatesTracker
-A naive crawler that traces cash back rates on Ebates
+# CashbackTracker
+A naive crawler that traces cash back rates on cashback websites
 
 ## How to use:
 * clone the code
