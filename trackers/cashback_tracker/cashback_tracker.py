@@ -101,13 +101,24 @@ class CashbackTracker(object):
 
     def retrieve_all_store_list(self):
         """make request and retrieve a list of StoreInfo
-            this method should be overrided in children class
+            THIS METHOD SHOULD BE OVERRIDED IN CHILDREN CLASS
 
             Returns
                #all_store_list: a list of StoreInfo objects containing all stores for the cashback website
         """
         all_store_list = list()
         return all_store_list
+
+    def txt_to_cashback(self, txt):
+        """Convert a string to CashBack object.
+            THIS METHOD SHOULD BE OVERRIDED IN CHILDREN CLASS
+
+            Args
+                @txt: a string describing cashback
+
+            Returns
+                #rst: a CashBack object
+        """
 
     @staticmethod
     def make_request(url):
