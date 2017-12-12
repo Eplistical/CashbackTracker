@@ -14,7 +14,7 @@ class EbatesTracker(CashbackTracker):
         """
         # retrieve html
         request_url = 'https://www.ebates.com/ajax/stores/sort.htm?sort=alpha'
-        text = EbatesTracker.make_request(request_url)
+        text = self.make_request(request_url)
         # parse and extract all_store_list
         soup = BeautifulSoup(text, 'html.parser')
         updatetime = datetime.now().strftime(self.time_stamp_pattern)
