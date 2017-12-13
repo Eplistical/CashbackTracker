@@ -6,8 +6,21 @@ class CashBack(object):
     BY_PERCENT = 1
     BY_DOLLAR = -1
 
-    CASHBACK_PATTERN = re.compile('(Up to )?(\$)?([\.\d]*)(%)?( Cash Back)?')
+    def __init__(self, value, measure, up_to=False):
+        """init a CashBack object 
 
+            Args
+                @value: cashabck value
+                @measure: BY_PERCENT or BY_DOLLAR
+                @up_to: up to some cashback or not
+        """
+        assert measure in (self.BY_PERCENT, self.BY_DOLLAR)
+        self.value = value
+        self.measure = measure
+        self.up_to = up_to
+
+    '''
+    CASHBACK_PATTERN = re.compile('(Up to )?(\$)?([\.\d]*)(%)?( Cash Back)?')
     def __init__(self, txt):
         """init from a txt retrieved
 
@@ -40,6 +53,8 @@ class CashBack(object):
                 self.measure = self.BY_PERCENT
             else:
                 raise ValueError('Incompatible Cashback Format')
+
+    '''
 
     def __repr__(self):
         """print out

@@ -36,7 +36,7 @@ class CashbackTracker(object):
 
         for query_store, store in zip(self.query_store_list, self.store_list):
             # find the record in database
-            last_store = self.dbmgr.find(store)
+            last_store = self.dbmgr.find(store, self.txt_to_cashback)
             # focus on new piece of data or cashback adjustment
             if last_store is None or store.cashback != last_store.cashback:
                 self.dbmgr.update(store)
@@ -64,7 +64,7 @@ class CashbackTracker(object):
             if line and not line.startswith('#'):
                 s = line.split()
                 name = " ".join(s[:-1]).strip()
-                alert_threash = s[-1]
+                alert_threash = self.txt_to_cashback(s[-1])
                 query_store_list.append(
                         QueryStoreInfo(name, self.source, alert_threash)
                         )
@@ -102,22 +102,11 @@ class CashbackTracker(object):
     def retrieve_all_store_list(self):
         """make request and retrieve a list of StoreInfo
             THIS METHOD SHOULD BE OVERRIDED IN CHILDREN CLASS
-
-            Returns
-               #all_store_list: a list of StoreInfo objects containing all stores for the cashback website
         """
-        all_store_list = list()
-        return all_store_list
 
-    def txt_to_cashback(self, txt):
-        """Convert a string to CashBack object.
+    def txt_to_cashback(self):
+        """Convert string to CashBack object.
             THIS METHOD SHOULD BE OVERRIDED IN CHILDREN CLASS
-
-            Args
-                @txt: a string describing cashback
-
-            Returns
-                #rst: a CashBack object
         """
 
     @staticmethod

@@ -6,12 +6,10 @@ class QueryStoreInfo(object):
     def __init__(self, name, source, alert_threash):
         """init
         """
+        assert isinstance(alert_threash, CashBack)
         self.name = name
         self.source = source
-        if isinstance(alert_threash, CashBack):
-            self.alert_threash = alert_threash
-        else:
-            self.alert_threash = CashBack(alert_threash)
+        self.alert_threash = alert_threash
 
     def __repr__(self):
         """print out
@@ -30,12 +28,10 @@ class StoreInfo(object):
     def __init__(self, name, source, cashback, updatetime):
         """init
         """
+        assert isinstance(cashback, CashBack)
         self.name = name
         self.source = source
-        if isinstance(cashback, CashBack):
-            self.cashback = cashback
-        else:
-            self.cashback = CashBack(cashback)
+        self.cashback = cashback
         self.updatetime = updatetime
 
     def __repr__(self):

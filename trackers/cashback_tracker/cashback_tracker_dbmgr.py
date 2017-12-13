@@ -66,9 +66,9 @@ class CashbackTrackerDBMgr(object):
     def __contains__(self, obj):
         """check if a store exists
         """
-        return (self.find(obj) is not None)
+        return self.find(obj, None)
 
-    def find(self, obj):
+    def find(self, obj, txt_to_cashback_func=None):
         """find info and return StoreInfo object
         """
         name = obj.name.replace("'", "''")
@@ -78,13 +78,20 @@ class CashbackTrackerDBMgr(object):
             WHERE name = '%s' AND source = '%s'
             ''' % (name, source))
         rows = self.cursor.fetchall()
-        if len(rows) == 1:
-            return StoreInfo(*rows[0])
-        elif len(rows) == 0:
-            return None
+        if txt_to_cashback_func is None:
+            # no cashback converter, only return found or not
+            return len(rows) > 0
         else:
-            raise CashBackTrackerError(
-                'Find more than one record in database for ' + name)
+            # cashback converter passed, return StoreInfo object
+            if len(rows) == 1:
+                name, source, cashback_txt, updatetime = rows[0]
+                cashback = txt_to_cashback_func(cashback_txt)
+                return StoreInfo(name, source, cashback, updatetime)
+            elif len(rows) == 0:
+                return None
+            else:
+                raise CashBackTrackerError(
+                    'Find more than one record in database for ' + name)
 
     def delete(self, obj):
         """delete a piece of info in database,
@@ -152,7 +159,6 @@ class CashbackTrackerDBMgr(object):
                     name.replace("'", "''"),
                     source.replace("'", "''"),
                     )
-        print(cmd)
         self.cursor.execute(cmd)
         rows = self.cursor.fetchall()
         return rows
