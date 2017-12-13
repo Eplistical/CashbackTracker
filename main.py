@@ -4,6 +4,7 @@ import time
 # local modules
 from trackers import EbatesTracker
 from trackers import BeFrugalTracker
+from trackers import CouponCactusTracker
 
 
 def parsearg():
@@ -21,7 +22,7 @@ def parsearg():
 
 def main():
     #tracker = EbatesTracker()
-    tracker = BeFrugalTracker()
+    tracker = CouponCactusTracker()
     args = parsearg()
     # check args
     if args.runcount <= 0 or args.interval <= 0:
