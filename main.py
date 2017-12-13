@@ -3,6 +3,7 @@ import argparse
 import time
 # local modules
 from trackers import EbatesTracker
+from trackers import BeFrugalTracker
 
 
 def parsearg():
@@ -19,7 +20,8 @@ def parsearg():
     return parser.parse_args()
 
 def main():
-    tracker = EbatesTracker()
+    #tracker = EbatesTracker()
+    tracker = BeFrugalTracker()
     args = parsearg()
     # check args
     if args.runcount <= 0 or args.interval <= 0:
