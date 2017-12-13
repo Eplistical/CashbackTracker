@@ -1,4 +1,5 @@
 __pycache__/
-.EbatesTracker.db
+.CashbackTracker.db
 ALERT_ADDR
 QUERY_STORE_LIST
+test.py
